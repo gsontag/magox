@@ -17,6 +17,7 @@ var Default = targets.Build
 func init() {
 	targets.Config.Timeout = 2 * time.Minute
 	targets.Config.Platforms = []string{"windows/amd64", "js/wasm"}
+	targets.Config.HintsIgnore = []string{"[darwin]"}
 	// The packages that must build for every target of Go, not only Linux
 	// (specification, section 4.10)
 	targets.Config.CrossPkgs = []string{

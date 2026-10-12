@@ -64,7 +64,8 @@ func (s *plainStep) Finish(res Result) {
 	s.r.mu.Lock()
 	detail := s.detail
 	s.r.mu.Unlock()
-	b.WriteString(line(icon, s.name, detail, res.Summary, time.Since(s.start)) + "\n")
+	b.WriteString(line(icon, s.name, detail, res.Summary, time.Since(s.start)))
+	b.WriteByte('\n')
 	details(&b, s.buf.String(), res.Notes, res.Err != nil)
 	if res.Err != nil && s.r.github {
 		// An annotation shows on the summary of the run, without opening the logs

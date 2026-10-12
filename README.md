@@ -29,10 +29,12 @@ func Lint() error { return gox.Lint{}.Run() }
 
 - `gox`: `Build` (several platforms at once), `Test` (through `go test -json`),
   `Coverage`, `CoverHTML`, `Lint`, `Fmt`, `FmtCheck`, `Vet`, `Tidy`,
-  `TidyCheck`, `Generate`.
+  `TidyCheck`, `Generate`, `Fix` and `FixCheck` (the modernizers of go fix,
+  cached: fast), `Hints` (the hints of gopls that go fix has not, as the type
+  arguments it can infer: slow, gopls loads the whole module).
 - `targets`: the targets every project needs, to import with `//mage:import`
-  (build, cross, test, coverage, coverageHTML, lint, lintFix, fmt, vet, tidy,
-  check, all), set in the `init` of the magefile through `targets.Config`.
+  (build, cross, test, coverage, coverageHTML, lint, lintFix, fmt, fix, hints,
+  vet, tidy, check, all), set in the `init` of the magefile through `targets.Config`.
   A target of the magefile may not have the name of one of them, unless the
   import has an alias: `//mage:import go` gives `go:test`, `go:lint`...
 - `magox.Run` makes a step of any function; `magox.Sh` of any command.

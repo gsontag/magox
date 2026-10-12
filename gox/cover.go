@@ -208,7 +208,8 @@ func excludeGenerated(file string) error {
 			generated[src] = g
 		}
 		if !g {
-			b.WriteString(l + "\n")
+			b.WriteString(l)
+			b.WriteByte('\n')
 		}
 	}
 	return os.WriteFile(file, []byte(b.String()), 0o644)
@@ -256,5 +257,7 @@ func isGenerated(file string) bool {
 			return true
 		}
 	}
+	// a file that cannot be read is kept in the profile
+	_ = sc.Err()
 	return false
 }

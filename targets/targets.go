@@ -40,6 +40,10 @@ type Settings struct {
 	Profile          string  // the coverage profile
 	ExcludeGenerated bool    // the generated files out of the coverage
 	MinCoverage      float64 // Coverage fails below, in percent; 0 for none
+
+	// HintsIgnore drops the hints of gopls that contain one of these:
+	// "[darwin]" for those of another platform
+	HintsIgnore []string
 }
 
 // Config is what the targets run with.
@@ -107,6 +111,14 @@ func LintFix() error { return gox.Lint{Fix: true}.Run() }
 // Fmt formats the code with the formatters of golangci-lint.
 func Fmt() error { return gox.Fmt() }
 
+// Fix applies the fixes of go fix: Go of before, written with the features
+// of now.
+func Fix() error { return gox.Fix(pkgs()...) }
+
+// Hints fails on the hints of gopls, those that go fix has not: slow, gopls
+// loads the whole module.
+func Hints() error { return gox.Hints{Ignore: Config.HintsIgnore}.Run() }
+
 // Vet runs go vet.
 func Vet() error { return gox.Vet(pkgs()...) }
 
@@ -114,10 +126,12 @@ func Vet() error { return gox.Vet(pkgs()...) }
 func Tidy() error { return gox.Tidy() }
 
 // Check runs the checks of quality, without changing a file: format,
-// go.mod, vet, lint.
+// go.mod, vet, go fix, lint.
 func Check() {
-	mg.Deps(gox.FmtCheck, gox.TidyCheck, Vet, Lint)
+	mg.Deps(gox.FmtCheck, gox.TidyCheck, Vet, fixCheck, Lint)
 }
+
+func fixCheck() error { return gox.FixCheck(pkgs()...) }
 
 // All runs the checks, the tests with their coverage, and the cross builds.
 func All() {

@@ -118,6 +118,12 @@ func (c *Cmd) Stdout(w io.Writer) *Cmd {
 	return c
 }
 
+// Stderr sends the error output of the command to w instead of the log.
+func (c *Cmd) Stderr(w io.Writer) *Cmd {
+	c.cmd.Stderr = w
+	return c
+}
+
 // Run runs the command, written first in the log: on a failure, it shows
 // what to run again by hand.
 func (c *Cmd) Run() error {
