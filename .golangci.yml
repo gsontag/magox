@@ -1,0 +1,66 @@
+version: "2"
+
+run:
+  timeout: 5m
+  allow-parallel-runners: true
+
+linters:
+  default: none
+  enable:
+    - dupl
+    - errcheck
+    - errorlint
+    - copyloopvar
+    - goconst
+    - gocyclo
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - nilerr
+    - prealloc
+    - revive
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
+    - usetesting
+    - exhaustive
+  settings:
+    errcheck:
+      # The writers of the steps are buffers, or the terminal
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
+    revive:
+      # Without it, the list of rules replaces the default ones
+      enable-default-rules: true
+      rules:
+        - name: comment-spacings
+  exclusions:
+    rules:
+      - path: '(.+)_test\.go'
+        linters:
+          - goconst
+
+formatters:
+  enable:
+    - goimports
+    - golines
+    - gofumpt
+  settings:
+    gofumpt:
+      module-path: github.com/gsontag/magox
+      extra:
+        group-params: true
+        balance-calls: true
+        clothe-returns: true
+    golines:
+      max-len: 120
+      shorten-comments: true
+      tab-len: 4
+    goimports:
+      local-prefixes:
+        - github.com/gsontag/magox
