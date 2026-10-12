@@ -38,6 +38,9 @@ type Step interface {
 
 const modeGitHub = "github"
 
+// Output is where the steps are written; the tests replace it.
+var Output io.Writer = os.Stdout
+
 // New chooses the rendering from MAGOX_OUTPUT (live, plain, verbose, github),
 // else from the environment.
 func New() Reporter {

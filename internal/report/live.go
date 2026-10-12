@@ -2,13 +2,25 @@ package report
 
 import (
 	"io"
-	"os"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/pterm/pterm"
 )
+
+// screen is the area of the terminal that the steps are drawn in.
+type screen interface {
+	Update(text ...any)
+	Stop() error
+}
+
+// newScreen opens an area; the tests replace it, pterm needing a terminal.
+var newScreen = func() screen {
+	a := pterm.DefaultArea
+	p, _ := a.Start()
+	return p
+}
 
 var frames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
 
@@ -17,7 +29,7 @@ var frames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "�
 // the steps that failed are printed below it, for they would not fit inside.
 type live struct {
 	mu     sync.Mutex
-	area   *pterm.AreaPrinter
+	area   screen
 	steps  []*liveStep
 	active int
 	frame  int
@@ -42,7 +54,7 @@ func (r *live) Start(name, detail string) Step {
 	r.steps = append(r.steps, s)
 	r.active++
 	if r.active == 1 {
-		r.area, _ = pterm.DefaultArea.Start()
+		r.area = newScreen()
 		r.stop = make(chan struct{})
 		go r.tick(r.stop)
 	}
@@ -109,7 +121,7 @@ func (s *liveStep) Finish(res Result) {
 	close(r.stop)
 	_ = r.area.Stop()
 	for _, s := range r.steps {
-		details(os.Stdout, s.log.String(), s.result.Notes, s.result.Err != nil)
+		details(Output, s.log.String(), s.result.Notes, s.result.Err != nil)
 	}
 	r.steps = nil
 }

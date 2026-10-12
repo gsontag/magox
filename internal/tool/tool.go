@@ -10,7 +10,10 @@ import (
 	"sync"
 )
 
-var declared = sync.OnceValues(func() (map[string]bool, error) {
+// declared caches the tools of go.mod; the tests read it again.
+var declared = sync.OnceValues(goModTools)
+
+func goModTools() (map[string]bool, error) {
 	out, err := exec.Command("go", "mod", "edit", "-json").Output()
 	if err != nil {
 		return nil, fmt.Errorf("reading go.mod: %w", err)
@@ -24,7 +27,7 @@ var declared = sync.OnceValues(func() (map[string]bool, error) {
 		tools[path.Base(t.Path)] = true
 	}
 	return tools, nil
-})
+}
 
 // Command returns the command that runs the tool name, of the package pkg:
 // through `go tool` if go.mod declares it, else from the PATH.

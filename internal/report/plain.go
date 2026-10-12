@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"os"
 	"strings"
 	"sync"
 	"time"
@@ -42,7 +41,7 @@ func (r *plain) Start(name, detail string) Step {
 func (r *plain) print(s string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	fmt.Fprint(os.Stdout, s)
+	fmt.Fprint(Output, s)
 }
 
 func (s *plainStep) Log() io.Writer { return s.log }

@@ -60,7 +60,7 @@ func (t Test) Run() error {
 	args = append(append(args, t.Args...), pkgs...)
 
 	return magox.Run("test", describe(pkgs), func(s *magox.Step) error {
-		run := newTestRun(s)
+		run := newTestRun(s.Detail)
 		err := s.Command("go", args...).Stdout(&lines{fn: run.handle}).Run()
 		run.report(s.Log())
 		s.Detail(describe(pkgs))
@@ -121,7 +121,7 @@ type testCase struct {
 }
 
 type testRun struct {
-	step                    *magox.Step
+	progress                func(string)
 	passed, failed, skipped int
 	pkgs                    int
 	pkgOutput               map[string][]string
@@ -133,9 +133,9 @@ type testRun struct {
 	other                   bytes.Buffer // what go test wrote that is not JSON
 }
 
-func newTestRun(s *magox.Step) *testRun {
+func newTestRun(progress func(string)) *testRun {
 	return &testRun{
-		step:        s,
+		progress:    progress,
 		pkgOutput:   map[string][]string{},
 		tests:       map[string]*testCase{},
 		buildOutput: map[string][]string{},
@@ -170,7 +170,7 @@ func (r *testRun) handle(l []byte) {
 			if e.Action == actFail {
 				r.pkgFailed = append(r.pkgFailed, e.Package)
 			}
-			r.step.Detail(fmt.Sprintf("%d packages · %s", r.pkgs, r.summary()))
+			r.progress(fmt.Sprintf("%d packages · %s", r.pkgs, r.summary()))
 			return
 		}
 		switch e.Action {
