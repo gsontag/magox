@@ -44,6 +44,10 @@ type Settings struct {
 	// HintsIgnore drops the hints of gopls that contain one of these:
 	// "[darwin]" for those of another platform
 	HintsIgnore []string
+
+	// Checks are the checks of the project that Check runs with its own:
+	// functions as mg.Deps takes them
+	Checks []any
 }
 
 // Config is what the targets run with.
@@ -126,9 +130,9 @@ func Vet() error { return gox.Vet(pkgs()...) }
 func Tidy() error { return gox.Tidy() }
 
 // Check runs the checks of quality, without changing a file: format,
-// go.mod, vet, go fix, lint.
+// go.mod, vet, go fix, lint, and those of Config.Checks.
 func Check() {
-	mg.Deps(gox.FmtCheck, gox.TidyCheck, Vet, fixCheck, Lint)
+	mg.Deps(append([]any{gox.FmtCheck, gox.TidyCheck, Vet, fixCheck, Lint}, Config.Checks...)...)
 }
 
 func fixCheck() error { return gox.FixCheck(pkgs()...) }
