@@ -34,11 +34,23 @@ func Lint() error { return gox.Lint{}.Run() }
   `TidyCheck`, `Generate`, `Fix` and `FixCheck` (the modernizers of go fix,
   cached: fast), `Hints` (the hints of gopls that go fix has not, as the type
   arguments it can infer: slow, gopls loads the whole module).
-- `targets`: the targets every project needs, to import with `//mage:import`
-  (build, cross, test, coverage, coverageHTML, lint, lintFix, fmt, fix, hints,
-  vet, tidy, check, all), set in the `init` of the magefile through `targets.Config`.
-  A target of the magefile may not have the name of one of them, unless the
-  import has an alias: `//mage:import go` gives `go:test`, `go:lint`...
+- `targets`: the targets every project needs, a package by domain, each
+  imported under its namespace with `//mage:import <namespace>`:
+  `targets/build` (build:run, build:cross), `targets/quality`
+  (quality:check, quality:lint, quality:lintFix, quality:fmt, quality:fix,
+  quality:hints, quality:vet, quality:tidy), `targets/test` (test:run,
+  test:coverage, test:coverageHTML); `targets` itself gives all. Each
+  package has its `Config`, set in the `init` of the magefile. The magefile
+  adds its own targets to a namespace, and its checks to quality:check:
+
+  ```go
+  type Quality mg.Namespace
+
+  // Chars fails on the invisible characters: quality:chars.
+  func (Quality) Chars() error { ... }
+
+  func init() { quality.Config.Checks = []any{Quality.Chars} }
+  ```
 - `magox.Run` makes a step of any function; `magox.Sh` of any command.
 - The tools come from the `tool` directives of go.mod, else from the PATH.
 
@@ -55,6 +67,6 @@ go tool mage -d examples/bolt -w ../bolt -l
 magox builds itself, from `magefiles/`:
 
 ```sh
-go tool mage        # all: checks, tests, coverage
+go tool mage        # all: quality:check, test:coverage, build:cross
 go tool mage -l     # the targets
 ```

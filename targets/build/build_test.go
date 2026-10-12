@@ -1,15 +1,9 @@
-package targets
+package build
 
 import (
 	"slices"
 	"testing"
 )
-
-func TestDefaults(t *testing.T) {
-	if !Config.Race || !Config.ExcludeGenerated || Config.Profile != "coverage.out" {
-		t.Errorf("Config = %+v", Config)
-	}
-}
 
 func TestPkgs(t *testing.T) {
 	old := Config
