@@ -1,5 +1,7 @@
 # magox
 
+[![ci](https://github.com/gsontag/magox/actions/workflows/ci.yml/badge.svg)](https://github.com/gsontag/magox/actions/workflows/ci.yml)
+
 A layer over [mage](https://magefile.org) for the projects in Go: the targets
 call the toolchain in Go, not in shell, and each step shows as one line, its
 state and its duration. The output of a step shows only if it fails.
