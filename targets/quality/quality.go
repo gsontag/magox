@@ -66,6 +66,14 @@ func Fix() error { return gox.Fix(Config.Pkgs...) }
 // loads the whole module.
 func Hints() error { return gox.Hints{Ignore: Config.HintsIgnore}.Run() }
 
+// Align fails on the structs whose fields, in another order, would take
+// less memory: a table of them, the most wasteful first.
+func Align() error { return gox.FieldAlignment{Pkgs: Config.Pkgs}.Run() }
+
+// AlignFix rearranges the fields of the structs that Align finds; those with
+// comments are left, fieldalignment would drop them.
+func AlignFix() error { return gox.FieldAlignment{Pkgs: Config.Pkgs, Fix: true}.Run() }
+
 // Vet runs go vet.
 func Vet() error { return gox.Vet(Config.Pkgs...) }
 

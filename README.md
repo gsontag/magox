@@ -33,12 +33,16 @@ func Lint() error { return gox.Lint{}.Run() }
   `Coverage`, `CoverHTML`, `Lint`, `Fmt`, `FmtCheck`, `Vet`, `Tidy`,
   `TidyCheck`, `Generate`, `Fix` and `FixCheck` (the modernizers of go fix,
   cached: fast), `Hints` (the hints of gopls that go fix has not, as the type
-  arguments it can infer: slow, gopls loads the whole module).
+  arguments it can infer: slow, gopls loads the whole module),
+  `FieldAlignment` (the structs that would take less memory in another order,
+  in a table, the most wasteful first; only those that spare memory indeed,
+  with the size classes of the allocator; `Fix` rearranges those without
+  comments, that fieldalignment would drop).
 - `targets`: the targets every project needs, a package by domain, each
   imported under its namespace with `//mage:import <namespace>`:
   `targets/build` (build:run, build:cross), `targets/quality`
   (quality:check, quality:lint, quality:lintFix, quality:fmt, quality:fix,
-  quality:hints, quality:vet, quality:tidy), `targets/test` (test:run,
+  quality:hints, quality:align, quality:alignFix, quality:vet, quality:tidy), `targets/test` (test:run,
   test:coverage, test:coverageHTML); `targets` itself gives all. Each
   package has its `Config`, set in the `init` of the magefile. The magefile
   adds its own targets to a namespace, and its checks to quality:check:
