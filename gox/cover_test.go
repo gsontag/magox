@@ -47,6 +47,20 @@ func TestProfileTotal(t *testing.T) {
 	}
 }
 
+func TestTableRootPackage(t *testing.T) {
+	p, err := readProfile(writeProfile(t,
+		"example.com/m/m.go:3.10,5.2 2 1",
+		"example.com/m/sub/s.go:3.10,5.2 2 0",
+	))
+	if err != nil {
+		t.Fatal(err)
+	}
+	table := p.table()
+	if strings.Contains(table, "example.com") || !strings.Contains(table, ". ") || !strings.Contains(table, "sub ") {
+		t.Errorf("want the packages . and sub:\n%s", table)
+	}
+}
+
 func TestReadProfileBadLine(t *testing.T) {
 	if _, err := readProfile(writeProfile(t, "example.com/m/a.go:3.10,5.2 x 1")); err == nil {
 		t.Error("no error on a bad line")

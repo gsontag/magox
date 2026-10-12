@@ -136,7 +136,8 @@ func (p *profile) table() string {
 	data = append(data, []string{"package", "coverage", "statements"})
 	for _, n := range names {
 		pc := percent(pkgs[n].covered, pkgs[n].total)
-		name := strings.TrimPrefix(n, prefix)
+		// the root package is the prefix without its slash
+		name := strings.TrimSuffix(strings.TrimPrefix(n+"/", prefix), "/")
 		if name == "" {
 			name = "."
 		}

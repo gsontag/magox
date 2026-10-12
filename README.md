@@ -47,3 +47,10 @@ pipe or a CI, annotations on GitHub Actions, everything with `mage -v`.
 ```sh
 go tool mage -d examples/bolt -w ../bolt -l
 ```
+
+magox builds itself, from `magefiles/`:
+
+```sh
+go tool mage        # all: checks, tests, coverage
+go tool mage -l     # the targets
+```
