@@ -206,7 +206,7 @@ func TestLiveDrawsStepsUntilTheLastIsDone(t *testing.T) {
 	if !stopped || !strings.Contains(content, "✗ test") {
 		t.Errorf("screen = %q, stopped %v: want the failure, frozen", content, stopped)
 	}
-	if got := out.String(); got != "  │ --- FAIL  TestX\n    see above\n" {
+	if got := out.String(); got != "\n  │ --- FAIL  TestX\n    see above\n" {
 		t.Errorf("details = %q", got)
 	}
 

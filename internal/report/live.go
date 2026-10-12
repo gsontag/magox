@@ -1,6 +1,7 @@
 package report
 
 import (
+	"fmt"
 	"io"
 	"strings"
 	"sync"
@@ -120,6 +121,8 @@ func (s *liveStep) Finish(res Result) {
 	}
 	close(r.stop)
 	_ = r.area.Stop()
+	// The area leaves the cursor at the end of its last line
+	fmt.Fprintln(Output)
 	for _, s := range r.steps {
 		details(Output, s.log.String(), s.result.Notes, s.result.Err != nil)
 	}
